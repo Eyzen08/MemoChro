@@ -13,6 +13,8 @@ import {
   withMedia,
 } from "@/lib/data";
 import type { Search, Memory, Album, Story, Place } from "@/lib/types";
+import { SampleMemories } from "@/components/editorial";
+import editorial from "@/components/editorial.module.css";
 import {
   PageHeading,
   Empty,
@@ -97,7 +99,7 @@ export default async function SectionPage({
       .limit(1);
     check(anniversary.error);
     return (
-      <>
+      <div className={editorial.home} data-editorial-home>
         <PageHeading
           eyebrow={new Date().toLocaleDateString("en", {
             weekday: "long",
@@ -161,6 +163,7 @@ export default async function SectionPage({
             </div>
           )}
         </section>
+        {!result.memories.length && <SampleMemories home />}
         <OnboardingLinks />
         {result.memories.length > 0 && (
           <section className="home-section">
@@ -249,7 +252,7 @@ export default async function SectionPage({
           “We do not remember days, we remember moments.”
           <small>Cesare Pavese</small>
         </div>
-      </>
+      </div>
     );
   }
   const [title, description] = titles[section];

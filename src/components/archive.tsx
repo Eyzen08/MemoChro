@@ -27,6 +27,7 @@ import type {
 } from "@/lib/types";
 import { SamplePhoto } from "./sample-photo";
 import { Tilt } from "./forms";
+import { PhotoComposition } from "./editorial";
 
 export function Brand({href = "/home"}: {href?: string}) {
   return (
@@ -355,26 +356,6 @@ export function Pagination({
   );
 }
 
-export function PrintStack() {
-  return (
-    <Tilt className="print-stack">
-      <div className="print print-back">
-        <SamplePhoto name="baking" alt="A parent and child baking together" />
-        <span>Little things, lasting impressions.</span>
-      </div>
-      <div className="print print-middle">
-        <SamplePhoto name="beach" alt="Friends walking along the shore" />
-        <span>A different perspective.</span>
-      </div>
-      <div className="print print-front">
-        <SamplePhoto name="picnic" alt="Friends talking over an evening picnic" priority />
-        <span>The people you want to remember.</span>
-      </div>
-      <span className="stack-note">Make room for what matters.</span>
-    </Tilt>
-  );
-}
-
 export function SectionTitle({
   title,
   href,
@@ -428,7 +409,7 @@ export function HomeIntro() {
         </Link>
         <PrivateNote />
       </div>
-      <PrintStack />
+      <PhotoComposition />
     </div>
   );
 }
