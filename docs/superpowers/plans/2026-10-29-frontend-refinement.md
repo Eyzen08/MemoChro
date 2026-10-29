@@ -6,7 +6,7 @@ Steps: (1) add browser regression coverage; (2) shell, typography, form and uplo
 
 Ruling: implement in the existing clean checkout, with production build in a clean temporary directory outside the locked OneDrive cache. Existing private fixtures and deployment remain the baseline.
 
-Status: implementation verified; protected preview deployment pending.
+Status: complete. Source commit `9166680811a9e34273cb42a23610c847deff2428` is pushed on `codex/frontend-refinement`. Protected staging deployment `dpl_5G9JXgXGZPPW2MwvW5DL1A7txquh` is READY and assigned to the existing preview alias. Hosted demo/search/photo viewer and private auth smoke checks passed; anonymous access remains protected. Public aliases retain the previous production release. See DEPLOYMENT.md for rollback and remaining hosted-upload limit.
 
 Ruling: reserve a separate feedback/action row below a bounded, keyboard-focusable field scroller. This prevents the sticky bar from covering fields. Short viewports retain a 220px minimum and ordinary page scrolling.
 

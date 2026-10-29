@@ -9,10 +9,10 @@
 ## Protected preview delivered
 
 - Preview: https://memochro-preview-eyzen08.vercel.app
-- Immutable deployment: https://memochro-82bp7l11q-eyzen08s-projects.vercel.app
-- Deployment ID: `dpl_FGjRGR2jvEGQuzMT9wCXEgu37KKx`, target `staging`, state **READY**.
-- Source commit: `b8c9a020d53fcd178cbb1ddfa7c541766df5bd49`.
-- Private repository: https://github.com/Eyzen08/MemoChro, branch `main`.
+- Immutable deployment: https://memochro-avcr9xkux-eyzen08s-projects.vercel.app
+- Deployment ID: `dpl_5G9JXgXGZPPW2MwvW5DL1A7txquh`, target `staging`, state **READY**.
+- Source commit: `9166680811a9e34273cb42a23610c847deff2428`.
+- Private repository: https://github.com/Eyzen08/MemoChro, branch `codex/frontend-refinement`.
 
 On 2026-10-29 the user explicitly selected **keep it as a protected preview**. No public production release or SMTP provisioning is required for this handover. The first Vercel request defaulted to production and was canceled before completion; the delivered build explicitly targets staging.
 
@@ -53,3 +53,11 @@ An export is unencrypted. Protect it like the original archive. Do not edit the 
 Use Supabase backup/restore facilities appropriate to the selected plan, and test restoration in an isolated project. Backup retention and recovery objectives are operator decisions still pending. Do not delete or reset production tables to solve a migration error.
 
 For a bad application release, restore the previous verified Vercel deployment. A code rollback does not roll back database changes: migrations are forward-only additions, and destructive changes require a backup and explicit migration plan.
+
+## Frontend refinement preview — October 29
+
+Source-only staging deployment `dpl_5G9JXgXGZPPW2MwvW5DL1A7txquh` reached READY. The existing preview alias now serves the refined interface and `/demo`. Anonymous `/demo` requests return a 302 to Vercel SSO. In the owner browser, demo navigation/search (one matching Sunday memory), memory detail, photograph modal/Escape, and private authentication/sign-out passed smoke checks. Screenshot proof is retained locally under ignored `test-results/hosted-refined-preview.png`. Hosted photo uploading remains unverified because of the existing extension file-access limitation; local browser upload/finalizer/isolation/partial-retry checks against hosted Supabase passed.
+
+The public `memochro.vercel.app` and `memochro-git-main-eyzen08s-projects.vercel.app` aliases retain production deployment `dpl_3APAcnLFMHNhETxTJesYovzJFFfK`. Vercel automatically assigned its generic team alias to the staging build; that alias was restored to the same prior production deployment. Deployment protection, public site configuration, Supabase configuration and SMTP were not changed. No migrations were needed.
+
+Previous protected preview for rollback: `dpl_FGjRGR2jvEGQuzMT9wCXEgu37KKx` (`memochro-82bp7l11q-eyzen08s-projects.vercel.app`). Roll back this revision by assigning only `memochro-preview-eyzen08.vercel.app` to that deployment.
