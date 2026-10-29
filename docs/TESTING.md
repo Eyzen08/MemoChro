@@ -7,11 +7,13 @@ Verified locally on Windows, Node 24, Chromium, and the dedicated hosted Supabas
 - `npm test`: **6 passing**. Required fields and real calendar dates; UUIDs and safe redirects; file signature, MIME and size; password whitespace; TAR checksum/alignment and long photo paths.
 - `npm run typecheck`: passing after final source changes.
 - `npm run lint`: passing with ESLint 10.13.0.
-- `npm run build`: optimized production build completed during implementation. A final clean-copy build is being verified because OneDrive locked old generated output; the source directory is unchanged.
+- `npm run build`: **passing** from a clean temporary copy after `npm ci`, using the final source and lockfile. OneDrive locked the workspace's old generated `.next` output. No source files were removed; verification used `C:\Users\Ezian\AppData\Local\Temp\memochro-verify-4f28cc9b52814a2d9773c3e3bef0dcf6` outside sync.
 - Full Playwright run: **7 passing, 1 intentionally skipped**, 3.2 minutes against the running application and hosted Supabase. The skipped test permanently deletes its fixture account and is opt-in.
 - The opt-in account deletion test was run separately with `TEST_ACCOUNT_DELETION=1`: **1 passing**, 13.4 seconds. Incorrect password is rejected; correct password removes active user data and Storage objects; old credentials no longer validate.
 
 The seven regular browser cases verify signed-out route protection and expired callback handling; memory CRUD with a photo larger than Vercel's form-body limit; refresh persistence, photo caption, full-size viewer, favorites, search, associations, story saving, original-photo export and safe deletion; direct two-account database/Storage isolation; six responsive widths and themes/reduced motion; preservation of a selected person beyond the first 500 options; duplicate uploads from two tabs; preservation of text after failed saves.
+
+Hosted smoke evidence: owner browser signed in to the protected staging build, opened Home, created a real text memory, and reloaded its detail URL with the saved text intact. Anonymous requests to both the alias and immutable URL redirect to Vercel SSO. Hosted file-picker automation was blocked by the extension's local-file permission; that extra permission was left disabled. The source, UI and records were not replaced with a mock to bypass the test. Stale password AMR was separately rejected by the account-deletion function in a rolled-back SQL assertion. All 12 exposed user tables were confirmed RLS-enabled and the media bucket confirmed private.
 
 ## Regression evidence
 

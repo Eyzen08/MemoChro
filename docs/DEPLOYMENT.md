@@ -6,7 +6,23 @@
 - Vercel project: **memochro**, ID `prj_Z9pfNYt7U6ohFMMDcBGLAKntJJIM`, Node 24, Singapore functions. Default Vercel deployment protection is retained.
 - Three reviewed migrations are checked in and applied: archive foundation, private previews and deletion guards/indexes.
 
-Deployment status and the actual tested URL must be appended after the remote build completes. No production URL is claimed by this initial setup section.
+## Protected preview delivered
+
+- Preview: https://memochro-preview-eyzen08.vercel.app
+- Immutable deployment: https://memochro-82bp7l11q-eyzen08s-projects.vercel.app
+- Deployment ID: `dpl_FGjRGR2jvEGQuzMT9wCXEgu37KKx`, target `staging`, state **READY**.
+- Source commit: `b8c9a020d53fcd178cbb1ddfa7c541766df5bd49`.
+- Private repository: https://github.com/Eyzen08/MemoChro, branch `main`.
+
+On 2026-10-29 the user explicitly selected **keep it as a protected preview**. No public production release or SMTP provisioning is required for this handover. The first Vercel request defaulted to production and was canceled before completion; the delivered build explicitly targets staging.
+
+Anonymous HTTP requests to both preview URLs redirect to Vercel SSO, verifying deployment protection remains active. The owner's existing browser session opens the actual app. The connector's share-link fetch endpoint returned 403, so access was verified through the owner's existing browser session instead of weakening protection.
+
+Supabase Site URL is the preview alias. Six exact confirmation/recovery callback URLs are allowlisted for that alias, localhost:3000 and 127.0.0.1:3000. There is no broad domain wildcard. SMTP remains a later public-launch prerequisite.
+
+Hosted owner-browser smoke checks verified sign-in, authenticated Home, real memory creation and full reload persistence, then sign-out. The hosted photo chooser test was blocked by Chrome extension file-access permissions; no broader permission was enabled. The full local-browser upload workflow against hosted Supabase, including a 5+ MiB original and private preview generation, passed. Do not conflate that local browser check with a completed hosted photo smoke test.
+
+The Vercel build reached READY. Detailed build-log API access returned a team-scope 403; no expanded permissions or protection bypass was requested. Logs can be reviewed through the owner's Vercel dashboard. The private repository contains the verified source and all migrations; deployment was from explicit source files, so automatic Git push deployment is not configured.
 
 ## Build and release
 

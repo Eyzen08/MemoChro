@@ -1,6 +1,6 @@
 # Implementation and release status
 
-Status as of 2026-10-29. This is an initial working implementation; **not a declaration of 100% production readiness**.
+Status as of 2026-10-29. The user selected a **protected preview for now**. That is the current handover target; public production launch remains deferred. This is an initial working implementation, not a declaration of 100% production readiness.
 
 | Phase | Implemented | Verification / remaining gate |
 |---|---|---|
@@ -14,7 +14,7 @@ Status as of 2026-10-29. This is an initial working implementation; **not a decl
 | 7 Places/people | CRUD, optional coordinates, memory filters and associations | Live creation/associations and 501-person regression verified |
 | 8 Account | Profile, password change code, originals+records export and confirmed deletion | Export and account deletion verified; recovery-delivered password change requires SMTP |
 | 9 QA/refinement | Unit/integration/browser checks, review fixes, security headers and previews | No full assistive-tech audit, broad device matrix or production load test |
-| 10 Deployment | Dedicated Supabase and Vercel projects provisioned; deployment being verified | Record actual URL/build state in DEPLOYMENT.md; public launch gated below |
+| 10 Deployment | Dedicated Supabase, private GitHub repository and protected Vercel staging deployment | READY build; owner browser opens app; anonymous requests go to SSO; public launch deferred by user |
 
 ## Launch prerequisites
 
@@ -32,5 +32,8 @@ Status as of 2026-10-29. This is an initial working implementation; **not a decl
 - Very large exports can hit hosting time limits and are not snapshot-consistent during simultaneous edits.
 - No video, sharing, map provider, AI, contact import or facial recognition is implemented; these are later-version scope.
 - Motion uses selected CSS perspective effects, not a heavy 3D renderer. More elaborate detail morphs and continuous frame-rate profiling were not completed.
+- OneDrive locked existing generated build output on Windows. A clean copy outside the synced folder builds successfully; use a checkout outside OneDrive for dependable local builds. The blocked old cache was retained.
+- Next's bundled lint plugins still declare ESLint 9 peer ranges. ESLint 10.13.0 passes the actual lint run and clean install/build, but npm emits peer-range warnings. Revisit when the upstream plugins update their declared ranges.
+- Hosted sign-in and memory save/reload are verified. Hosted photo-picker automation and detailed Vercel build-log retrieval were blocked by existing permission scopes; no broader permissions were enabled to finish the preview.
 
 An external provisioning dependency does not count as a passing phase gate. Auth email delivery, complete production hardening and public launch remain explicitly open until verified.

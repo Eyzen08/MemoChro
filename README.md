@@ -2,6 +2,8 @@
 
 **Your life, through time.** A private personal archive built from the supplied master plan. This repository contains a functioning initial application, not sample data or a static mockup. Production release is gated on the remaining checks in [the implementation checklist](docs/IMPLEMENTATION_CHECKLIST.md).
 
+Protected preview: **https://memochro-preview-eyzen08.vercel.app**. Vercel sign-in is required before the app's own authentication. The user selected a protected preview rather than public launch. For local review, the first two accounts in the ignored `.env.test.local` file remain disposable preview logins; the third account was intentionally deleted by its test. All fixture archive content was cleaned after verification. Those credentials are not in Git or deployment source.
+
 ## Run locally
 
 Node 24 and npm are recommended.
