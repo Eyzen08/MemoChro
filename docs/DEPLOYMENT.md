@@ -22,7 +22,9 @@ Supabase Site URL is the preview alias. Six exact confirmation/recovery callback
 
 Hosted owner-browser smoke checks verified sign-in, authenticated Home, real memory creation and full reload persistence, then sign-out. The hosted photo chooser test was blocked by Chrome extension file-access permissions; no broader permission was enabled. The full local-browser upload workflow against hosted Supabase, including a 5+ MiB original and private preview generation, passed. Do not conflate that local browser check with a completed hosted photo smoke test.
 
-The Vercel build reached READY. Detailed build-log API access returned a team-scope 403; no expanded permissions or protection bypass was requested. Logs can be reviewed through the owner's Vercel dashboard. The private repository contains the verified source and all migrations; deployment was from explicit source files, so automatic Git push deployment is not configured.
+The Vercel build reached READY. Detailed build-log API access returned a team-scope 403; no expanded permissions or protection bypass was requested. Logs can be reviewed through the owner's Vercel dashboard. Deployment was from explicit source files, so automatic Git push deployment is not configured.
+
+On 2026-10-29, the source repository was made public at the user's request. The Vercel staging preview remains protected by Vercel sign-in, and personal archives remain private.
 
 ## Build and release
 

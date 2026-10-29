@@ -14,7 +14,7 @@ Status as of 2026-10-29. The user selected a **protected preview for now**. That
 | 7 Places/people | CRUD, optional coordinates, memory filters and associations | Live creation/associations and 501-person regression verified |
 | 8 Account | Profile, password change code, originals+records export and confirmed deletion | Export and account deletion verified; recovery-delivered password change requires SMTP |
 | 9 QA/refinement | Unit/integration/browser checks, review fixes, security headers and previews | No full assistive-tech audit, broad device matrix or production load test |
-| 10 Deployment | Dedicated Supabase, private GitHub repository and protected Vercel staging deployment | READY build; owner browser opens app; anonymous requests go to SSO; public launch deferred by user |
+| 10 Deployment | Dedicated Supabase, public GitHub source repository and protected Vercel staging deployment | READY build; owner browser opens app; anonymous requests go to SSO; public app launch deferred by user |
 
 ## Launch prerequisites
 

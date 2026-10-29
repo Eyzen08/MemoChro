@@ -1,42 +1,56 @@
 # MemoChro
 
-**Your life, through time.** A private personal archive built from the supplied master plan. This repository contains a functioning initial application, not sample data or a static mockup. Production release is gated on the remaining checks in [the implementation checklist](docs/IMPLEMENTATION_CHECKLIST.md).
+**Your life, through time.** MemoChro is a private home for the moments that make a life: the big days, the ordinary afternoons, the people beside you, and the stories photographs cannot tell on their own. Preserve memories with photos and reflections, follow them through time, and gather them into albums.
 
-Protected preview: **https://memochro-preview-eyzen08.vercel.app**. Vercel sign-in is required before the app's own authentication. The user selected a protected preview rather than public launch. For local review, the first two accounts in the ignored `.env.test.local` file remain disposable preview logins; the third account was intentionally deleted by its test. All fixture archive content was cleaned after verification. Those credentials are not in Git or deployment source.
+![MemoChro landing page showing an editorial photo composition](docs/images/landing.webp)
+
+## Explore the idea
+
+The [sample archive](https://memochro-preview-eyzen08.vercel.app/demo) lets you browse a fictional life through memories, a timeline, albums, stories, and places. Its sample records are read-only and never become part of anyone's personal archive. The preview is protected by Vercel sign-in, followed by MemoChro's own sign-in for personal archives.
+
+![Fictional sample archive with photographic memory cards](docs/images/sample-archive.webp)
+
+## What you can keep
+
+- **Memories:** Save a date, photographs, captions, a reflection, mood, tags, and the people or place involved.
+- **Timeline and search:** Revisit moments chronologically or find them with text and filters.
+- **Albums and stories:** Bring related moments together and write what a photograph cannot hold.
+- **Your archive:** Manage your profile and privacy, revisit originals in an export, or delete your account and its archive.
+
+Personal records are protected by account authentication, row-level database rules, and private photo storage. The six photographic examples are licensed sample assets with fictional narratives; see [photo credits](docs/PHOTO_CREDITS.md).
+
+## Tech stack
+
+| Layer | Tools |
+|---|---|
+| App | Next.js 16 App Router, React 19, TypeScript |
+| Design | Native CSS, Libre Caslon Display, DM Sans, Lucide icons |
+| Data and identity | Supabase Auth, PostgreSQL with row-level security, private Supabase Storage |
+| Media | Sharp for validated image previews and original-photo export |
+| Quality and hosting | Node test runner, Playwright, ESLint, Vercel |
 
 ## Run locally
 
-Node 24 and npm are recommended.
+Use Node.js 24 and npm. Set up a dedicated Supabase project and apply the migrations in [`supabase/migrations`](supabase/migrations); they create the private `memory-media` storage bucket. Configure Supabase email authentication with the local Site URL and callback URL as described in the [deployment guide](docs/DEPLOYMENT.md).
 
 ```powershell
 npm ci
 Copy-Item .env.example .env.local
-# Fill the three variables below from your dedicated Supabase project.
+# Fill in the values in .env.local for your Supabase project.
 npm run dev
 ```
 
-Open http://127.0.0.1:3000. Never commit `.env.local` or test credentials.
+Open `http://127.0.0.1:3000`. The sample archive at `/demo` can be explored without creating a personal account. The application uses these environment variables:
 
 | Variable | Purpose |
 |---|---|
-| `NEXT_PUBLIC_SUPABASE_URL` | Supabase project API URL |
-| `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Publishable client key, secured by RLS; never a service key |
-| `NEXT_PUBLIC_SITE_URL` | Exact application origin for email callbacks; localhost during development |
+| `NEXT_PUBLIC_SUPABASE_URL` | Supabase project URL |
+| `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Publishable client key; authorization is enforced by row-level security |
+| `NEXT_PUBLIC_SITE_URL` | Exact app origin for authentication callbacks, such as `http://127.0.0.1:3000` |
 
-Apply the checked-in migrations in order to a fresh Supabase project. Configure email confirmation, a production SMTP sender, Site URL and allowed callback URLs. Keep `memory-media` private. Existing environments must apply new migrations rather than rebuilding tables.
+Keep `.env.local`, test credentials, and private exports out of Git. Do not use a Supabase service-role key as the publishable key.
 
-## What works
-
-- Home, Timeline, Memories, Albums, Stories and Places, with server-backed results and honest empty states.
-- Email/password authentication, confirmation and recovery callback code, sign-out and password settings. Actual mail delivery needs configured SMTP.
-- Memory creation, editing, viewing, favorites, tags, people, places, albums and photo captions.
-- Direct authenticated private photo uploads, up to four at a time and 10 MiB each; server format/hash/size checks and decoded previews. Originals are preserved. Extremely large decoded images above 40 million pixels are rejected.
-- Database search, practical filters, date ordering and 18-item result pages.
-- Albums and stories with owned associations; drafts and reading views; deletion keeps underlying memories.
-- Place/people management, profile editing, complete records-and-original-photo TAR export and password-confirmed account deletion.
-- Dark/light themes, a composed CSS 3D print stack, pointer tilt, full-size photo viewer, keyboard controls and reduced-motion fallback.
-
-## Checks
+## Check the project
 
 ```powershell
 npm test
@@ -45,22 +59,16 @@ npm run lint
 npm run build
 ```
 
-Browser tests require explicitly provisioned disposable test accounts; see [TESTING](docs/TESTING.md). Never run destructive QA against a real archive.
+Browser tests use disposable accounts and a running local server; follow the [testing guide](docs/TESTING.md) before running them.
 
-## Architecture and handover
+## Project status and documentation
 
-Next.js App Router and strict TypeScript; React; Supabase Auth, PostgreSQL and private Storage; native CSS and Lucide; Sharp for private previews. Sensitive operations stay on the server, with owner RLS and composite foreign keys as database enforcement. No service-role key is needed by this application.
+MemoChro is a working initial release with a protected preview. Public production launch still needs verified email delivery and the remaining checks in the [implementation checklist](docs/IMPLEMENTATION_CHECKLIST.md). The source repository being public does not make personal archives or the preview public.
 
-- [Requirements](docs/PRODUCT_REQUIREMENTS.md)
-- [Audit and architecture](docs/ARCHITECTURE.md)
-- [Schema and ERD](docs/DATABASE_SCHEMA.md)
-- [Security and privacy](docs/SECURITY_AND_PRIVACY.md)
-- [Design system](docs/DESIGN_SYSTEM.md)
-- [Motion and 3D](docs/MOTION_AND_3D.md)
+- [Architecture](docs/ARCHITECTURE.md) and [database schema](docs/DATABASE_SCHEMA.md)
+- [Security and privacy design](docs/SECURITY_AND_PRIVACY.md)
 - [Testing and evidence](docs/TESTING.md)
 - [Deployment and recovery](docs/DEPLOYMENT.md)
-- [Implementation status and known limitations](docs/IMPLEMENTATION_CHECKLIST.md)
+- [Photography credits](docs/PHOTO_CREDITS.md)
 
-No AI analysis, public sharing, facial recognition, contact importing, video pipeline or map service is included in Version 1.
-
-The public welcome page links to `/demo`, a read-only fictional archive with six licensed sample photographs. Samples never enter user data. See [photography credits](docs/PHOTO_CREDITS.md) and the [frontend refinement ledger](docs/superpowers/plans/2026-10-29-frontend-refinement.md).
+**License:** No code reuse license has been granted. The sample photographs and fonts have their own licenses; see their credits and bundled license files.
