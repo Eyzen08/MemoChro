@@ -40,3 +40,9 @@ RLS omissions, cross-owner relationship IDs, ownership reassignment, public medi
 10. Deployment: production config, smoke tests, logs and handover.
 
 Track authored, tested and deployed separately. A blocked external gate is not a passing phase.
+
+## Read-only sample archive
+
+`src/lib/sample-archive.ts` contains six memories, two albums, one story, two places and three fictional people. `/demo` redirects to `/demo/home`; its section and detail pages use this module alone. The proxy skips Supabase session work for demo routes. Shared `ArchiveShell`, `Navigation`, `MemoryGrid`/`MemoryCard` and `PhotoGallery` accept explicit demo presentation options. No sample record is seeded or mixed into private queries, exports, counts or search. Private authentication still runs in `(archive)/layout.tsx`, and server mutations still authenticate independently.
+
+The memory editor owns a `File[]`; native file input state is cleared after selection. Click/drop append validated selections, thumbnails revoke object URLs on removal/unmount, and uploads remove a selection only after its finalizer succeeds (or the content hash already exists). A stable editing-session UUID survives server revalidation, preserving retry deduplication after partial saves. Dirty checks compare current form values with the initial snapshot and warn on ordinary links and browser unload; native history is untouched. No device content storage, autosave or drafts were added.

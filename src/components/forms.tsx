@@ -10,6 +10,9 @@ import {
   type FormEvent,
 } from "react";
 import Link from "next/link";
+import { PhotoSelection } from "./photo-selection";
+import { SamplePhoto } from "./sample-photo";
+import { useDirtyForm } from "./use-dirty-form";
 import { useRouter } from "next/navigation";
 import { createBrowserClient } from "@supabase/ssr";
 import { preparePhoto, finishPhoto, updateCaption } from "@/app/media-actions";
@@ -21,7 +24,6 @@ import {
   X,
   Sun,
   Moon,
-  Upload,
   Expand,
   Trash2,
 } from "lucide-react";
@@ -187,7 +189,7 @@ export function AuthForm({ mode }: { mode: "login" | "signup" | "recover" }) {
 }
 
 export function MemoryEditor({
-  id,
+  id: initialId,
   memory,
   places,
   people,
@@ -201,15 +203,21 @@ export function MemoryEditor({
   albums: Album[];
   links?: { people: string[]; albums: string[]; tags: string[] };
 }) {
+  // Server-action revalidation may generate another UUID for the /new page.
+  // Keep this editing session's identity through partial uploads and retries.
+  const [id] = useState(initialId);
   const router = useRouter();
+  const formRef = useRef<HTMLFormElement>(null);
+  const filesRef = useRef<File[]>([]);
+  const [files, setFiles] = useState<File[]>([]);
+  const allowLeave = useDirtyForm(formRef, filesRef);
+  function selectFiles(next: File[]) { filesRef.current = next; setFiles(next); }
   const [progress, setProgress] = useState("");
   const [state, action, pending] = useActionState(
     async (_: ActionState, form: FormData): Promise<ActionState> => {
       let saved = false;
       try {
-        const photos = form
-          .getAll("photos")
-          .filter((p): p is File => p instanceof File && p.size > 0);
+        const photos = [...filesRef.current];
         if (photos.length > 4)
           throw new Error("Choose up to 4 photographs at a time.");
         for (const photo of photos)
@@ -243,7 +251,7 @@ export function MemoryEditor({
             .map((b) => b.toString(16).padStart(2, "0"))
             .join("");
           const prepared = await preparePhoto(id, hash, photo.type);
-          if (prepared.exists) continue;
+          if (prepared.exists) { selectFiles(filesRef.current.filter(f => f !== photo)); continue; }
           const upload = await client.storage
             .from("memory-media")
             .upload(prepared.path, photo, {
@@ -252,14 +260,16 @@ export function MemoryEditor({
             });
           if (upload.error)
             throw new Error(
-              "The photo upload failed. Select the remaining photos and retry.",
+              "The photo upload failed. Your remaining selections are ready to retry.",
             );
           setProgress(
             "Checking photograph " + (index + 1) + " of " + photos.length + "…",
           );
           const finished = await finishPhoto(id, prepared.path, photo.name);
           if (finished.error) throw new Error(finished.error);
+          selectFiles(filesRef.current.filter(f => f !== photo));
         }
+        allowLeave();
         router.push("/memories/" + id);
         router.refresh();
         return {};
@@ -275,15 +285,16 @@ export function MemoryEditor({
     },
     {},
   );
-  const [files, setFiles] = useState<string[]>([]);
   return (
     <form
       action={action}
       onSubmit={preserveInputs(action)}
-      className="editor"
+      ref={formRef}
+      className="editor memory-editor"
       aria-busy={pending}
     >
       <input type="hidden" name="id" value={id} />
+      <div className="editor-fields" role="region" aria-label="Memory fields" tabIndex={0}>
       <div className="editor-main form-stack">
         <label className="title-label">
           Give this moment a name
@@ -309,7 +320,7 @@ export function MemoryEditor({
             />
           </label>
           <label>
-            Time <span className="optional">optional</span>
+            <span className="field-label">Time <span className="optional">optional</span></span>
             <input
               name="memory_time"
               type="time"
@@ -318,7 +329,7 @@ export function MemoryEditor({
           </label>
         </div>
         <label>
-          The story behind it <span className="optional">optional</span>
+          <span className="field-label">The story behind it <span className="optional">optional</span></span>
           <textarea
             name="description"
             rows={9}
@@ -327,41 +338,8 @@ export function MemoryEditor({
             placeholder="The little details. The people who were there. How it felt…"
           />
         </label>
-        <label className="upload-zone">
-          <Upload size={25} />
-          <strong>Add photographs</strong>
-          <span>JPEG, PNG or WebP · Up to 4 at a time · 10 MB each</span>
-          <input
-            type="file"
-            name="photos"
-            accept="image/jpeg,image/png,image/webp"
-            multiple
-            onChange={(e) =>
-              setFiles(Array.from(e.target.files || []).map((f) => f.name))
-            }
-          />
-          {files.length > 0 && (
-            <span className="selected-files">{files.join(", ")}</span>
-          )}
-        </label>
-        <Feedback state={state} />
-        {progress && (
-          <p className="hint" role="status">
-            {progress}
-          </p>
-        )}
-        <div className="form-actions">
-          <Link
-            href={memory ? `/memories/${id}` : "/memories"}
-            className="button secondary"
-          >
-            Cancel
-          </Link>
-          <SaveButton pending={pending}>
-            {memory ? "Save memory" : "Preserve this memory"}
-            <ArrowUpRight size={17} />
-          </SaveButton>
-        </div>
+        <PhotoSelection files={files} onChange={selectFiles} disabled={pending} />
+
       </div>
       <aside className="editor-side form-stack">
         <p className="eyebrow">The details</p>
@@ -455,6 +433,28 @@ export function MemoryEditor({
           storage.
         </p>
       </aside>
+      </div>
+      <div className="memory-save">
+        <Feedback state={state} />
+        {progress && (
+          <p className="hint" role="status">
+            {progress}
+          </p>
+        )}
+
+        <div className="form-actions">
+          <Link
+            href={memory ? `/memories/${id}` : "/memories"}
+            className="button secondary"
+          >
+            Cancel
+          </Link>
+          <SaveButton pending={pending}>
+            {memory ? "Save memory" : "Preserve this memory"}
+            <ArrowUpRight size={17} />
+          </SaveButton>
+        </div>
+      </div>
     </form>
   );
 }
@@ -713,9 +713,11 @@ export function DeleteForm({
 export function PhotoGallery({
   media,
   editable = false,
+  demo = false,
 }: {
   media: Media[];
   editable?: boolean;
+  demo?: boolean;
 }) {
   const dialog = useRef<HTMLDialogElement>(null);
   const [active, setActive] = useState(0);
@@ -735,15 +737,15 @@ export function PhotoGallery({
                 dialog.current?.showModal();
               }}
             >
-              <img
+              {demo ? <SamplePhoto name={m.url!.split("/").pop()!.replace("-1280.webp", "")} alt={m.caption} priority={!i} /> : <img
                 src={m.preview_url || m.url}
                 alt={m.caption || "Memory photograph"}
                 loading={i ? "lazy" : "eager"}
-              />
+              />}
               <Expand size={18} />
             </button>
             {m.caption && <figcaption>{m.caption}</figcaption>}
-            {editable && (
+            {editable && !demo && (
               <>
                 <CaptionForm media={m} />
                 <form action={action} onSubmit={preserveInputs(action)}>
@@ -761,6 +763,7 @@ export function PhotoGallery({
       <dialog
         ref={dialog}
         className="lightbox"
+        aria-label="Photograph viewer"
         onClick={(e) => {
           if (e.target === e.currentTarget) dialog.current?.close();
         }}
@@ -776,6 +779,8 @@ export function PhotoGallery({
         <img
           src={media[active]?.url}
           alt={media[active]?.caption || "Memory photograph"}
+          width={demo ? media[active]?.url?.includes("journey") ? 640 : 1280 : undefined}
+          height={demo ? media[active]?.url?.includes("journey") ? 960 : media[active]?.url?.includes("beach") ? 721 : 854 : undefined}
         />
         <p>{media[active]?.caption}</p>
         <div className="lightbox-controls">
@@ -930,25 +935,27 @@ export function Tilt({
 }
 
 export function MobileNav({ children }: { children: React.ReactNode }) {
+  const dialog = useRef<HTMLDialogElement>(null);
+  const trigger = useRef<HTMLButtonElement>(null);
   const [open, setOpen] = useState(false);
-  return (
-    <>
-      <button
-        className="mobile-menu icon-button"
-        type="button"
-        aria-label={open ? "Close navigation" : "Open navigation"}
-        aria-expanded={open}
-        onClick={() => setOpen(!open)}
-      >
-        {open ? <X /> : <Plus />}
-      </button>
-      {open && (
-        <div className="mobile-nav" onClick={() => setOpen(false)}>
-          {children}
-        </div>
-      )}
-    </>
-  );
+  function close() { dialog.current?.close(); }
+  return <>
+    <button ref={trigger} className="mobile-menu icon-button" type="button" aria-label="Open navigation"
+      aria-expanded={open} aria-controls="archive-navigation" onClick={() => { dialog.current?.showModal(); setOpen(true); }}><Plus /></button>
+    <dialog ref={dialog} id="archive-navigation" className="mobile-nav" aria-label="Archive navigation"
+      onClose={() => { setOpen(false); trigger.current?.focus(); }}
+      onKeyDown={e => {
+        if (e.key !== "Tab") return;
+        const items = Array.from(e.currentTarget.querySelectorAll<HTMLElement>('a[href], button:not([disabled]), [tabindex="0"]')).filter(el => el.getClientRects().length);
+        const first = items[0], last = items.at(-1);
+        if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last?.focus(); }
+        else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first?.focus(); }
+      }}
+      onClick={e => { if (e.target === e.currentTarget || (e.target as Element).closest("a")) close(); }}>
+      <button className="icon-button drawer-close" type="button" aria-label="Close navigation" onClick={close}><X /></button>
+      {children}
+    </dialog>
+  </>;
 }
 
 function CaptionForm({ media }: { media: Media }) {

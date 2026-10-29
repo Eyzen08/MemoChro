@@ -37,3 +37,7 @@ Status as of 2026-10-29. The user selected a **protected preview for now**. That
 - Hosted sign-in and memory save/reload are verified. Hosted photo-picker automation and detailed Vercel build-log retrieval were blocked by existing permission scopes; no broader permissions were enabled to finish the preview.
 
 An external provisioning dependency does not count as a passing phase gate. Auth email delivery, complete production hardening and public launch remain explicitly open until verified.
+
+## Frontend refinement — October 29
+
+Implemented shared typography/container/drawer refinements, light first-visit theme, aligned memory labels, reserved Save/Cancel and feedback space, dirty-form warnings, authoritative file selection with preview/removal/drop/cleanup and partial-upload retry, and an isolated read-only sample tour with six licensed photographs. No database migrations, new services, autosave or device content storage. Unit, functional/isolation and six-width visual confirmation passed; protected preview delivery is recorded in DEPLOYMENT.md. Public site and SMTP changes remain outside this revision.

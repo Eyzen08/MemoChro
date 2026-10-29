@@ -112,9 +112,9 @@ test("memory, uploads, search, relationships, export and safe deletion survive r
   await page
     .getByRole("button", { name: "View quiet-lake.jpg full size" })
     .click();
-  await expect(page.locator("dialog")).toBeVisible();
+  await expect(page.getByRole("dialog", {name:"Photograph viewer"})).toBeVisible();
   await page.keyboard.press("Escape");
-  await expect(page.locator("dialog")).not.toBeVisible();
+  await expect(page.getByRole("dialog", {name:"Photograph viewer"})).not.toBeVisible();
   await page
     .getByLabel("Caption", { exact: true })
     .fill("Lake, boat, and good company.");
@@ -302,7 +302,7 @@ test("responsive navigation, long text, theme persistence and reduced motion", a
         `${width}px ${path} overflow`,
       ).toBeTruthy();
     }
-    if (width < 768) {
+    if (width < 1200) {
       await page.getByRole("button", { name: "Open navigation" }).click();
       await expect(
         page
@@ -317,18 +317,20 @@ test("responsive navigation, long text, theme persistence and reduced motion", a
     }
   }
   await page.goto("/home");
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
   await page.getByRole("button", { name: "Switch color theme" }).click();
-  await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
   await page.reload();
-  await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
   await page.screenshot({
     path: "test-results/home-light.png",
     fullPage: true,
   });
   await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/demo/home");
   expect(
     await page
-      .locator(".print-stack")
+      .locator(".tilt").first()
       .evaluate((el) => getComputedStyle(el).transform),
   ).toBe("none");
   expect(errors).toEqual([]);

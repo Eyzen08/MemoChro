@@ -25,11 +25,12 @@ import type {
   Album,
   Tag,
 } from "@/lib/types";
+import { SamplePhoto } from "./sample-photo";
 import { Tilt } from "./forms";
 
-export function Brand() {
+export function Brand({href = "/home"}: {href?: string}) {
   return (
-    <Link href="/home" className="brand" aria-label="MemoChro home">
+    <Link href={href} className="brand" aria-label="MemoChro home">
       <span className="brand-mark">
         <i />
         <i />
@@ -134,19 +135,20 @@ export function Empty({
           : `Create ${kind === "memories" ? "a memory" : kind === "stories" ? "a story" : kind === "albums" ? "an album" : kind === "places" ? "a place" : "a person"}`}
         <ArrowUpRight size={16} />
       </Link>
+      {!filtered && <Link className="small-link" href="/demo">Explore the sample archive</Link>}
     </div>
   );
 }
 
-export function MemoryCard({ memory }: { memory: Memory }) {
+export function MemoryCard({ memory, demo = false }: { memory: Memory; demo?: boolean }) {
   return (
     <article className="memory-card">
       <Tilt>
         <Link
-          href={`/memories/${memory.id}`}
+          href={`${demo ? "/demo" : ""}/memories/${memory.id}`}
           className={`memory-picture ${memory.media?.length ? "" : "written-picture"}`}
         >
-          {memory.media?.[0]?.url ? (
+          {demo && memory.media?.[0]?.url ? <SamplePhoto name={memory.media[0].url.split("/").pop()!.replace("-1280.webp", "")} alt={memory.media[0].caption || memory.title} /> : memory.media?.[0]?.url ? (
             <img
               src={memory.media[0].preview_url || memory.media[0].url}
               alt={memory.media[0].caption || memory.title}
@@ -172,7 +174,7 @@ export function MemoryCard({ memory }: { memory: Memory }) {
             </span>
           )}
         </Link>
-        <form action={favoriteMemory} className="favorite-form">
+        {!demo && <form action={favoriteMemory} className="favorite-form">
           <input name="id" type="hidden" value={memory.id} />
           <input
             name="favorite"
@@ -185,7 +187,7 @@ export function MemoryCard({ memory }: { memory: Memory }) {
           >
             <Heart size={17} fill={memory.favorite ? "currentColor" : "none"} />
           </button>
-        </form>
+        </form>}
       </Tilt>
       <div className="memory-caption">
         <span className="eyebrow">
@@ -195,7 +197,7 @@ export function MemoryCard({ memory }: { memory: Memory }) {
             year: "numeric",
           })}
         </span>
-        <Link href={`/memories/${memory.id}`}>
+        <Link href={`${demo ? "/demo" : ""}/memories/${memory.id}`}>
           <h3>{memory.title}</h3>
         </Link>
         <p>{memory.description || "A moment, kept for you."}</p>
@@ -203,11 +205,11 @@ export function MemoryCard({ memory }: { memory: Memory }) {
     </article>
   );
 }
-export function MemoryGrid({ memories }: { memories: Memory[] }) {
+export function MemoryGrid({ memories, demo = false }: { memories: Memory[]; demo?: boolean }) {
   return (
     <div className="memory-grid">
       {memories.map((m) => (
-        <MemoryCard key={m.id} memory={m} />
+        <MemoryCard key={m.id} memory={m} demo={demo} />
       ))}
     </div>
   );
@@ -357,16 +359,16 @@ export function PrintStack() {
   return (
     <Tilt className="print-stack">
       <div className="print print-back">
-        <div className="print-art-back" />
+        <SamplePhoto name="baking" alt="A parent and child baking together" />
         <span>Little things, lasting impressions.</span>
       </div>
       <div className="print print-middle">
-        <img src="/mountains.jpg" alt="" />
+        <SamplePhoto name="beach" alt="Friends walking along the shore" />
         <span>A different perspective.</span>
       </div>
       <div className="print print-front">
-        <img src="/quiet-lake.jpg" alt="A still lake framed by mountains" />
-        <span>Somewhere you want to remember.</span>
+        <SamplePhoto name="picnic" alt="Friends talking over an evening picnic" priority />
+        <span>The people you want to remember.</span>
       </div>
       <span className="stack-note">Make room for what matters.</span>
     </Tilt>

@@ -10,6 +10,7 @@ import {
 import { redirect } from "next/navigation";
 import { configured, supabase } from "@/lib/supabase";
 import { Brand, PrintStack } from "@/components/archive";
+import { SamplePhoto } from "@/components/sample-photo";
 import { ThemeToggle } from "@/components/forms";
 export default async function Welcome({
   searchParams,
@@ -69,6 +70,10 @@ export default async function Welcome({
             </span>
           </div>
           <PrintStack />
+        </section>
+        <section className="public-sample" aria-labelledby="sample-title">
+          <div className="sample-section-heading"><div><h2 id="sample-title">A little life, ready to explore.</h2><p>A sample archive with fictional memories and licensed photography. Follow the moments, meet the people, read the stories.</p></div><Link className="button secondary" href="/demo">Explore the sample archive <ArrowUpRight size={18} /></Link></div>
+          <div className="sample-strip">{[["dinner", "Sunday, with room for everyone", "sunday-table"], ["baking", "The beautiful ordinary", "flour-everywhere"], ["beach", "We stayed for the last light", "last-light"]].map(([name,title,id]) => <Link key={id} href={"/demo/memories/"+id}><SamplePhoto name={name} alt={title} /><span>Sample memory</span><h3>{title}</h3></Link>)}</div>
         </section>
         <section className="public-features">
           <div>

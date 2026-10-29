@@ -9,7 +9,7 @@ export const metadata: Metadata = {
     "A private home for the moments, people, places and stories that make a life.",
 };
 const themeScript =
-  "try{document.documentElement.dataset.theme=localStorage.getItem('memochro-theme')||'dark'}catch{document.documentElement.dataset.theme='dark'}";
+  "try{document.documentElement.dataset.theme=localStorage.getItem('memochro-theme')==='dark'?'dark':'light'}catch{document.documentElement.dataset.theme='light'}";
 export default function RootLayout({
   children,
 }: {

@@ -62,3 +62,5 @@ Next.js App Router and strict TypeScript; React; Supabase Auth, PostgreSQL and p
 - [Implementation status and known limitations](docs/IMPLEMENTATION_CHECKLIST.md)
 
 No AI analysis, public sharing, facial recognition, contact importing, video pipeline or map service is included in Version 1.
+
+The public welcome page links to `/demo`, a read-only fictional archive with six licensed sample photographs. Samples never enter user data. See [photography credits](docs/PHOTO_CREDITS.md) and the [frontend refinement ledger](docs/superpowers/plans/2026-10-29-frontend-refinement.md).

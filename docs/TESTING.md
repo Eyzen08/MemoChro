@@ -50,6 +50,14 @@ Browser checks ran at **360, 390, 768, 1024, 1366 and 1440px**, visiting all six
 
 ## Boundaries of this evidence
 
-Email-confirmation and password-recovery inbox delivery have not been verified with production SMTP. Registration form validation and callback error handling are tested; this is not proof that emails reach an inbox. Manual screen-reader sessions, Safari/Firefox, exhaustive large-archive load tests, deliberate network-failure injection and a penetration test were not performed. No numeric frame-rate or Core Web Vitals claim is made.
+Email-confirmation and password-recovery inbox delivery have not been verified with production SMTP. Registration form validation and callback error handling are tested; this is not proof that emails reach an inbox. Manual screen-reader sessions, Safari/Firefox, exhaustive large-archive load tests, a penetration test and exhaustive network-failure permutations were not performed. A deliberate second-photo browser upload failure and successful retry are covered. No numeric frame-rate or Core Web Vitals claim is made.
 
 Exports stream original photos one at a time but assemble record metadata in memory. The export is not a transactionally consistent database snapshot if the archive is edited during export; avoid editing during a backup. Very large exports remain bounded by hosting execution time.
+
+## Frontend refinement coverage
+
+New coverage exercises the six-destination read-only demo, search and all four detail types, photo viewing, absent mutation controls, authenticated private counts/search isolation, photo click/drop/removal, object URL cleanup, failed-save selection/text preservation, native beforeunload and Cancel warnings, and a partial upload failure followed by a two-photo retry without duplicates. Unit tests cover local sample relationships and filter combinations.
+
+A batched screenshot review covered welcome, demo and memory editor at all six widths, both themes and reduced motion. Findings were fixed together: intrinsic image heights/print overflow, save-area overlap, mobile details width and drawer Tab wrapping. A short landscape regression (844×390) prevents the field scroller from collapsing. Final confirmation passed. Native browser-history behavior is deliberately not overridden.
+
+The opt-in account-deletion test still requires a freshly provisioned third account and was not rerun for this frontend revision. Hosted file-picker smoke remains limited by Chrome extension file-access permissions.

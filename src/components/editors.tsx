@@ -30,6 +30,7 @@ export async function EditorPage({ kind, id }: { kind: string; id?: string }) {
           description="Start with a title and a date. The rest is yours to tell."
         />
         <MemoryEditor
+          key={id || "new-memory"}
           id={recordId}
           memory={memory}
           {...options}

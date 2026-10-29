@@ -10,20 +10,20 @@ const destinations = [
   ["Stories", "/stories", BookOpen],
   ["Places", "/places", MapPin],
 ] as const;
-export function Navigation() {
+export function Navigation({basePath = ""}: {basePath?: string}) {
   const path = usePathname();
   return (
     <nav className="primary-nav" aria-label="Main navigation">
       {destinations.map(([label, href, Icon]) => (
         <Link
           key={href}
-          href={href}
-          className={path.startsWith(href) ? "active" : ""}
-          aria-current={path.startsWith(href) ? "page" : undefined}
+          href={basePath + href}
+          className={path.startsWith(basePath + href) ? "active" : ""}
+          aria-current={path.startsWith(basePath + href) ? "page" : undefined}
         >
           <Icon size={19} />
           <span>{label}</span>
-          {path.startsWith(href) && <i />}
+          {path.startsWith(basePath + href) && <i />}
         </Link>
       ))}
     </nav>

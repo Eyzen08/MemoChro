@@ -33,6 +33,7 @@ test("failed saves preserve memory text, tags, and story drafts", async ({
     "A long reflection that must survive a failed save.",
   );
   await expect(page.getByLabel("Tags", { exact: true })).toHaveValue(tags);
+  page.once("dialog", dialog => dialog.accept());
   await page.goto("/stories/new");
   await page.getByLabel("Title", { exact: true }).fill("   ");
   await page
